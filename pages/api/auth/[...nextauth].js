@@ -2,10 +2,11 @@ import NextAuth from "next-auth";
 import SequelizeAdapter, { models } from "@next-auth/sequelize-adapter";
 import GoogleProvider from "next-auth/providers/google";
 import { Sequelize, DataTypes } from "sequelize";
+import db from "../../../db/models/index.js";
 
 const { DB_NAME, DB_USER, DB_PASS, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } =
   process.env;
-console.log(models);
+
 const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASS, {
   host: "localhost",
   dialect: "postgres",
@@ -23,10 +24,8 @@ export default NextAuth({
     // },
     async session({ session, token, user }) {
       session.user.role = user.role;
+      session.user.id = user.id;
       return session;
-    },
-    async redirect({ url, baseUrl }) {
-      return url;
     },
   },
   providers: [

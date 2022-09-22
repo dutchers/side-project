@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 export default function User(props) {
   const { data: session, status } = useSession();
@@ -10,27 +11,37 @@ export default function User(props) {
   useEffect(() => {
     const getUser = async () => {
       const { user: id } = router.query;
-      console.log(id, "id");
-      console.log(router.query);
-      const res = await fetch(`http://localhost:3000/api/users?user=${id}`);
-      const user = await res.json();
-      console.log(user, "user");
+      let res;
+      try {
+        res = await fetch(`http://localhost:3000/api/users?user=${id}`);
+      } catch (err) {
+        console.error(err);
+      }
 
-      setUser(user[0]);
+      if (res) {
+        const user = await res.json();
+        setUser(user[0]);
+      } else {
+        setUser({ error: "Could not find user with Id Provided" });
+      }
     };
 
     getUser();
   }, [user.length]);
 
-  console.log(session, status);
-
-  if (session && session.user.role === "admin") {
+  if (session && session.user.role === "admin" && !user.error) {
     return (
-      <div>
-        <h1>Admin</h1>
-        <p>Welcome to the Admin Portal, {user.name}!</p>
+      <div className="container mx-auto flex justify-center items-center min-h-screen">
+        <Link
+          href="/maps/new"
+          className="border-solid border gray-900 px-8 py-2 rounded-md hover:top-px"
+        >
+          Create Map
+        </Link>
       </div>
     );
+  } else if (user.error) {
+    <p className="text-red-600">{user.error}</p>;
   } else {
     return (
       <div>

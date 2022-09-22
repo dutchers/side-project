@@ -1,27 +1,29 @@
 "use strict";
 const { Model } = require("sequelize");
-
-import { models } from "@next-auth/sequelize-adapter";
 module.exports = (sequelize, DataTypes) => {
-  class User extends Model {
+  class Map extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      this.belongsToMany(models.Map, { through: "UserMaps" });
+      if (models.user) {
+        this.belongsToMany(models.user, { through: "UserMaps" });
+      }
     }
   }
-  User.init(
+  Map.init(
     {
-      ...models.User,
-      role: DataTypes.STRING,
+      name: DataTypes.STRING,
+      private: DataTypes.BOOLEAN,
+      salt: DataTypes.STRING,
+      hash: DataTypes.STRING,
     },
     {
       sequelize,
-      modelName: "user",
+      modelName: "Map",
     }
   );
-  return User;
+  return Map;
 };

@@ -20,7 +20,7 @@ const UserTableRow = ({
         {roles.map((role) => {
           const selected = role === userRole;
           return (
-            <option value={role} selected={selected}>
+            <option value={role} defaultValue={selected} key={role}>
               {role}
             </option>
           );
