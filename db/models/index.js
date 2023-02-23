@@ -1,13 +1,14 @@
-"use strict";
-
 const fs = require("fs");
 const path = require("path");
+const { ConsoleMessage } = require("puppeteer");
 const Sequelize = require("sequelize");
 const basename = "index.js";
 const env = process.env.NODE_ENV || "development";
-const config = require("../config/config.js")[env];
+const config = require(path.resolve(__dirname, "../config/config.js"))[env];
 const db = {};
 const models = process.cwd() + "/db/models/" || __dirname;
+
+console.log(config);
 
 let sequelize;
 if (config.use_env_variable) {
@@ -41,13 +42,19 @@ Object.keys(db).forEach((modelName) => {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-sequelize
-  .sync()
-  .then(() => {
-    console.log("Database synced");
-  })
-  .catch((err) => {
-    console.error(`there was an error syncing the database: ${err}`);
-  });
+const syncDb = () => {
+  sequelize
+    .sync({ force: true })
+    .then(() => {
+      console.log("Database synced");
+      return;
+    })
+    .catch((err) => {
+      throw new Error(err);
+      console.error(`there was an error syncing the database: ${err}`);
+    });
+};
+
+//syncDb();
 
 module.exports = db;

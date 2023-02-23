@@ -8,7 +8,8 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      this.hasMany(models.OpeningHours);
+      this.belongsToMany(models.List, { through: "ListPlaces" });
     }
   }
   Place.init(
@@ -30,13 +31,16 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         isUrl: true,
       },
-      formattedPhoneNumber: DataTypes.STRING,
+      url: {
+        type: DataTypes.STRING,
+        isUrl: true,
+      },
       lat: DataTypes.FLOAT,
-      long: DataTypes.FLOAT,
+      lng: DataTypes.FLOAT,
       priceLevel: DataTypes.INTEGER,
       types: DataTypes.ARRAY(DataTypes.STRING),
-      global: DataTypes.BOOLEAN,
-      googlePlaceId: DataTypes.STRING,
+      global: { type: DataTypes.BOOLEAN, default: true },
+      placeId: DataTypes.STRING,
       updatedAt: {
         allowNull: false,
         type: DataTypes.DATE,

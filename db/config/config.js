@@ -1,4 +1,6 @@
+const dotenv = require("dotenv").config({ path: ".env.local" });
 const { DB_USER, DB_NAME, DB_PASS, DB_HOST } = process.env;
+
 module.exports = {
   development: {
     username: DB_USER,
